@@ -62,7 +62,7 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "Setting version to $VERSION"
           cd apps/vscode-extension
-          npm version $VERSION --no-git-tag-version
+          npm version $VERSION --no-git-tag-version --allow-same-version
 
       - name: Build extension
         if: steps.changes.outputs.changed == 'true'
