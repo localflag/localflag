@@ -7,7 +7,12 @@ The LocalFlag VS Code extension provides a sidebar view to see all your feature 
 
 ## Installation
 
-Install from the VS Code Marketplace (coming soon) or build locally:
+Install from one of the marketplaces:
+
+- [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=localflag.localflag-vscode)
+- [Open VSX](https://open-vsx.org/extension/localflag/localflag-vscode) (for VSCodium, Gitpod, etc.)
+
+Or build locally:
 
 ```bash
 cd apps/vscode-extension

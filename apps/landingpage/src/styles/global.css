@@ -13,6 +13,7 @@
   --color-accent-dim: #00ffcc33;
   --color-accent-glow: #00ffcc66;
   --color-cyan: #22d3ee;
+  --color-blue: #60a5fa;
   --color-emerald: #34d399;
   --color-purple: #a78bfa;
   --color-orange: #fb923c;
@@ -38,6 +39,8 @@ code, pre {
 .bg-accent-20 { background-color: rgba(0, 255, 204, 0.2); }
 .bg-cyan-10 { background-color: rgba(34, 211, 238, 0.1); }
 .bg-cyan-20 { background-color: rgba(34, 211, 238, 0.2); }
+.bg-blue-10 { background-color: rgba(96, 165, 250, 0.1); }
+.bg-blue-20 { background-color: rgba(96, 165, 250, 0.2); }
 .bg-emerald-10 { background-color: rgba(52, 211, 153, 0.1); }
 .bg-emerald-20 { background-color: rgba(52, 211, 153, 0.2); }
 .bg-purple-10 { background-color: rgba(167, 139, 250, 0.1); }
@@ -53,6 +56,8 @@ code, pre {
 .text-accent-20 { color: rgba(0, 255, 204, 0.2); }
 .text-cyan { color: var(--color-cyan); }
 .text-cyan-20 { color: rgba(34, 211, 238, 0.2); }
+.text-blue { color: var(--color-blue); }
+.text-blue-20 { color: rgba(96, 165, 250, 0.2); }
 .text-emerald { color: var(--color-emerald); }
 .text-emerald-20 { color: rgba(52, 211, 153, 0.2); }
 .text-purple { color: var(--color-purple); }
@@ -71,6 +76,8 @@ code, pre {
 .border-accent-50 { border-color: rgba(0, 255, 204, 0.5); }
 .border-cyan-20 { border-color: rgba(34, 211, 238, 0.2); }
 .border-cyan-30 { border-color: rgba(34, 211, 238, 0.3); }
+.border-blue-20 { border-color: rgba(96, 165, 250, 0.2); }
+.border-blue-30 { border-color: rgba(96, 165, 250, 0.3); }
 .border-emerald-20 { border-color: rgba(52, 211, 153, 0.2); }
 .border-emerald-30 { border-color: rgba(52, 211, 153, 0.3); }
 .border-purple-20 { border-color: rgba(167, 139, 250, 0.2); }
@@ -82,6 +89,7 @@ code, pre {
 .hover-border-accent-30:hover { border-color: rgba(0, 255, 204, 0.3); }
 .hover-border-accent-50:hover { border-color: rgba(0, 255, 204, 0.5); }
 .hover-border-cyan-30:hover { border-color: rgba(34, 211, 238, 0.3); }
+.hover-border-blue-30:hover { border-color: rgba(96, 165, 250, 0.3); }
 .hover-border-emerald-30:hover { border-color: rgba(52, 211, 153, 0.3); }
 .hover-border-purple-30:hover { border-color: rgba(167, 139, 250, 0.3); }
 .hover-border-orange-30:hover { border-color: rgba(251, 146, 60, 0.3); }
