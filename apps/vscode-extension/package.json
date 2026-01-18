@@ -1,0 +1,111 @@
+{
+  "name": "localflag-vscode",
+  "displayName": "LocalFlag",
+  "description": "Feature flag support for LocalFlag - Sidebar view, IntelliSense, and flag detection",
+  "version": "0.1.0",
+  "publisher": "localflag",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/localflag/localflag"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "feature-flags",
+    "feature-toggles",
+    "react",
+    "typescript"
+  ],
+  "activationEvents": [
+    "workspaceContains:**/flags.ts",
+    "workspaceContains:**/flags.config.ts",
+    "workspaceContains:**/*.flags.ts"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "localflag-explorer",
+          "title": "LocalFlag",
+          "icon": "media/flag.svg"
+        }
+      ]
+    },
+    "views": {
+      "localflag-explorer": [
+        {
+          "id": "localflag-flags",
+          "name": "Feature Flags"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "localflag.refresh",
+        "title": "Refresh Flags",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "localflag.goToDefinition",
+        "title": "Go to Flag Definition"
+      },
+      {
+        "command": "localflag.toggleFlag",
+        "title": "Toggle Flag",
+        "icon": "$(symbol-boolean)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "localflag.refresh",
+          "when": "view == localflag-flags",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "localflag.toggleFlag",
+          "when": "view == localflag-flags && viewItem == booleanFlag",
+          "group": "inline"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "LocalFlag",
+      "properties": {
+        "localflag.flagFilePatterns": {
+          "type": "array",
+          "default": [
+            "**/flags.ts",
+            "**/flags.config.ts",
+            "**/*.flags.ts"
+          ],
+          "description": "Glob patterns to search for flag definition files"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run build",
+    "build": "node esbuild.config.mjs",
+    "watch": "node esbuild.config.mjs --watch",
+    "lint": "eslint src --ext ts",
+    "package": "vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^2.22.0",
+    "esbuild": "^0.19.11",
+    "ovsx": "^0.8.3",
+    "typescript": "^5.3.3"
+  }
+}

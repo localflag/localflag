@@ -102,4 +102,5 @@ function MyComponent() {
 ## Next Steps
 
 - Learn about the [LocalFlagDevTools](/guides/devtools/) for local development
+- Try the [VS Code Extension](/guides/vscode-extension/) to manage flags in your editor
 - Explore the [API Reference](/reference/provider/) for all available options
