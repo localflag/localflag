@@ -2,7 +2,7 @@
   "name": "localflag-vscode",
   "displayName": "LocalFlag",
   "description": "Feature flag support for LocalFlag - Sidebar view, IntelliSense, and flag detection",
-  "version": "0.1.0",
+  "version": "0.0.3",
   "publisher": "localflag",
   "license": "MIT",
   "repository": {
