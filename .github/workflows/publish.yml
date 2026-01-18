@@ -1,43 +1,21 @@
-name: Publish to npm
+name: Publish
 
 on:
   release:
     types: [published]
 
 jobs:
-  publish:
-    runs-on: ubuntu-latest
+  npm:
+    name: Publish npm
+    uses: ./.github/workflows/publish-npm.yml
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  vscode:
+    name: Publish VS Code
+    uses: ./.github/workflows/publish-vscode.yml
     permissions:
-      contents: read
-      id-token: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'pnpm'
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Set version from release tag
-        run: |
-          VERSION="${GITHUB_REF_NAME#v}"
-          echo "Setting version to $VERSION"
-          cd packages/react
-          npm version $VERSION --no-git-tag-version
-
-      - name: Build package
-        run: pnpm build --filter @localflag/react
-
-      - name: Publish to npm
-        run: pnpm publish --filter @localflag/react --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      contents: write
+    secrets:
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
+      OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}

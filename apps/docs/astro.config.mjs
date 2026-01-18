@@ -14,6 +14,7 @@ export default defineConfig({
 					items: [
 						{ label: 'Getting Started', slug: 'guides/getting-started' },
 						{ label: 'DevTools', slug: 'guides/devtools' },
+						{ label: 'VS Code Extension', slug: 'guides/vscode-extension' },
 					],
 				},
 				{
