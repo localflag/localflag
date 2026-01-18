@@ -7,7 +7,7 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: 'LocalFlag',
-			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/user/localflag' }],
+			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/localflag/localflag' }],
 			sidebar: [
 				{
 					label: 'Guides',
