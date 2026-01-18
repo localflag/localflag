@@ -2,6 +2,8 @@
 
 Type-safe feature flags for React with built-in DevTools.
 
+[Website](https://localflag.io) · [Documentation](https://docs.localflag.io) · [Demo](https://demo.localflag.io) · [GitHub](https://github.com/localflag/localflag)
+
 ## Installation
 
 ```bash

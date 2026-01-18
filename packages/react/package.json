@@ -1,7 +1,27 @@
 {
   "name": "@localflag/react",
   "version": "0.0.1",
+  "description": "Type-safe feature flags for React with built-in DevTools",
   "type": "module",
+  "license": "MIT",
+  "author": "Daniel Gietmann",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/localflag/localflag.git",
+    "directory": "packages/react"
+  },
+  "homepage": "https://localflag.io",
+  "bugs": {
+    "url": "https://github.com/localflag/localflag/issues"
+  },
+  "keywords": [
+    "react",
+    "feature-flags",
+    "feature-toggles",
+    "devtools",
+    "typescript",
+    "hooks"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
