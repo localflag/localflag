@@ -1,0 +1,58 @@
+name: Feature Request
+description: Suggest a new feature for LocalFlag
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature!
+
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      description: Which package would this feature be for?
+      options:
+        - "@localflag/react"
+        - "localflag-vscode (VS Code Extension)"
+        - "Documentation"
+        - "New Package"
+        - "Other"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What problem does this feature solve?
+      placeholder: I'm frustrated when...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: How would you like this to work?
+      placeholder: |
+        It would be great if...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Any alternative solutions you've considered?
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other context, mockups, or examples
+    validations:
+      required: false
