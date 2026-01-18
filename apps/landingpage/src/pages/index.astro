@@ -1,5 +1,17 @@
 ---
 import Layout from "../layouts/Layout.astro";
+
+// Fetch latest version from npm registry
+let version = "0.0.1";
+try {
+  const res = await fetch("https://registry.npmjs.org/@localflag/react/latest");
+  if (res.ok) {
+    const data = await res.json();
+    version = data.version || version;
+  }
+} catch {
+  // Fallback to default version
+}
 ---
 
 <Layout>
@@ -68,7 +80,7 @@ import Layout from "../layouts/Layout.astro";
             <div class="animate-fade-up">
               <div class="status-badge mb-8">
                 <span class="status-dot"></span>
-                <span class="text-text-secondary">v0.1.0</span>
+                <span class="text-text-secondary">v{version}</span>
                 <span class="text-text-muted">|</span>
                 <span class="text-accent">React 19 ready</span>
               </div>
@@ -278,6 +290,51 @@ import Layout from "../layouts/Layout.astro";
             <p class="text-text-secondary leading-relaxed">
               Built-in floating panel. Toggle flags in real-time. No browser
               extension needed.
+            </p>
+          </div>
+
+          <!-- Keyboard Shortcut -->
+          <div class="feature-card hover-lift hover-border-purple-30">
+            <div class="feature-icon bg-purple-10 border border-purple-20">
+              <svg
+                class="w-6 h-6 text-purple"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-3">Keyboard First</h3>
+            <p class="text-text-secondary leading-relaxed">
+              Toggle DevTools with <code class="text-accent text-sm">⌘⇧F</code>.
+              Fast access without leaving your keyboard.
+            </p>
+          </div>
+
+          <!-- Flag Descriptions -->
+          <div class="feature-card hover-lift hover-border-orange-30">
+            <div class="feature-icon bg-orange-10 border border-orange-20">
+              <svg
+                class="w-6 h-6 text-orange"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-3">Documented Flags</h3>
+            <p class="text-text-secondary leading-relaxed">
+              Add descriptions to flags. See what each flag does right in the DevTools panel.
             </p>
           </div>
 

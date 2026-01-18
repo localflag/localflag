@@ -14,6 +14,8 @@
   --color-accent-glow: #00ffcc66;
   --color-cyan: #22d3ee;
   --color-emerald: #34d399;
+  --color-purple: #a78bfa;
+  --color-orange: #fb923c;
 }
 
 body {
@@ -38,6 +40,10 @@ code, pre {
 .bg-cyan-20 { background-color: rgba(34, 211, 238, 0.2); }
 .bg-emerald-10 { background-color: rgba(52, 211, 153, 0.1); }
 .bg-emerald-20 { background-color: rgba(52, 211, 153, 0.2); }
+.bg-purple-10 { background-color: rgba(167, 139, 250, 0.1); }
+.bg-purple-20 { background-color: rgba(167, 139, 250, 0.2); }
+.bg-orange-10 { background-color: rgba(251, 146, 60, 0.1); }
+.bg-orange-20 { background-color: rgba(251, 146, 60, 0.2); }
 .bg-red-80 { background-color: rgba(239, 68, 68, 0.8); }
 .bg-yellow-80 { background-color: rgba(234, 179, 8, 0.8); }
 .bg-green-80 { background-color: rgba(34, 197, 94, 0.8); }
@@ -49,6 +55,10 @@ code, pre {
 .text-cyan-20 { color: rgba(34, 211, 238, 0.2); }
 .text-emerald { color: var(--color-emerald); }
 .text-emerald-20 { color: rgba(52, 211, 153, 0.2); }
+.text-purple { color: var(--color-purple); }
+.text-purple-20 { color: rgba(167, 139, 250, 0.2); }
+.text-orange { color: var(--color-orange); }
+.text-orange-20 { color: rgba(251, 146, 60, 0.2); }
 .text-text-primary { color: var(--color-text-primary); }
 .text-text-secondary { color: var(--color-text-secondary); }
 .text-text-muted { color: var(--color-text-muted); }
@@ -63,12 +73,18 @@ code, pre {
 .border-cyan-30 { border-color: rgba(34, 211, 238, 0.3); }
 .border-emerald-20 { border-color: rgba(52, 211, 153, 0.2); }
 .border-emerald-30 { border-color: rgba(52, 211, 153, 0.3); }
+.border-purple-20 { border-color: rgba(167, 139, 250, 0.2); }
+.border-purple-30 { border-color: rgba(167, 139, 250, 0.3); }
+.border-orange-20 { border-color: rgba(251, 146, 60, 0.2); }
+.border-orange-30 { border-color: rgba(251, 146, 60, 0.3); }
 
 .hover-text-accent:hover { color: var(--color-accent); }
 .hover-border-accent-30:hover { border-color: rgba(0, 255, 204, 0.3); }
 .hover-border-accent-50:hover { border-color: rgba(0, 255, 204, 0.5); }
 .hover-border-cyan-30:hover { border-color: rgba(34, 211, 238, 0.3); }
 .hover-border-emerald-30:hover { border-color: rgba(52, 211, 153, 0.3); }
+.hover-border-purple-30:hover { border-color: rgba(167, 139, 250, 0.3); }
+.hover-border-orange-30:hover { border-color: rgba(251, 146, 60, 0.3); }
 .hover-border-border-bright:hover { border-color: var(--color-border-bright); }
 .hover-border-text-muted:hover { border-color: var(--color-text-muted); }
 .hover-bg-accent-90:hover { background-color: rgba(0, 255, 204, 0.9); }
@@ -295,7 +311,7 @@ code, pre {
 
 @media (min-width: 1024px) {
   .features-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 

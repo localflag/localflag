@@ -48,7 +48,11 @@ function setStoredOverrides<T extends FeatureFlags>(
 // Event emitter for devtools communication
 type Listener = () => void;
 const listeners = new Set<Listener>();
-let currentState: { flags: FeatureFlags; defaultFlags: FeatureFlags } | null = null;
+let currentState: {
+  flags: FeatureFlags;
+  defaultFlags: FeatureFlags;
+  descriptions: Record<string, string>;
+} | null = null;
 
 export function subscribeToFlagChanges(listener: Listener): () => void {
   listeners.add(listener);
@@ -66,6 +70,7 @@ function notifyListeners() {
 export function FeatureFlagProvider<T extends FeatureFlags>({
   children,
   defaultFlags,
+  descriptions = {},
   storageKey = STORAGE_KEY_DEFAULT,
   persistOverrides = true,
 }: FeatureFlagProviderProps<T>) {
@@ -80,9 +85,13 @@ export function FeatureFlagProvider<T extends FeatureFlags>({
 
   // Update global state for devtools
   useEffect(() => {
-    currentState = { flags, defaultFlags };
+    currentState = {
+      flags,
+      defaultFlags,
+      descriptions: descriptions as Record<string, string>,
+    };
     notifyListeners();
-  }, [flags, defaultFlags]);
+  }, [flags, defaultFlags, descriptions]);
 
   // Persist overrides to localStorage
   useEffect(() => {

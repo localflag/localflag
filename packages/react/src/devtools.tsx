@@ -9,6 +9,12 @@ type Position = "bottom-right" | "bottom-left" | "top-right" | "top-left";
 interface DevToolsProps {
   position?: Position;
   defaultOpen?: boolean;
+  /**
+   * Keyboard shortcut to toggle the DevTools panel.
+   * Set to `false` to disable the shortcut.
+   * @default "mod+shift+f" (Cmd+Shift+F on Mac, Ctrl+Shift+F on Windows/Linux)
+   */
+  shortcut?: string | false;
 }
 
 const POSITION_STORAGE_KEY = "localflag:position";
@@ -109,17 +115,34 @@ const flagRowHoverStyles: React.CSSProperties = {
   backgroundColor: "rgba(255, 255, 255, 0.03)",
 };
 
+const flagNameContainerStyles: React.CSSProperties = {
+  flex: 1,
+  overflow: "hidden",
+  display: "flex",
+  flexDirection: "column",
+  gap: 2,
+  minWidth: 0,
+};
+
 const flagNameStyles: React.CSSProperties = {
   color: "rgba(255, 255, 255, 0.7)",
   fontSize: 12,
   fontWeight: 400,
-  flex: 1,
   overflow: "hidden",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
   display: "flex",
   alignItems: "center",
   gap: 6,
+};
+
+const flagDescriptionStyles: React.CSSProperties = {
+  color: "rgba(255, 255, 255, 0.4)",
+  fontSize: 10,
+  fontWeight: 400,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
 };
 
 const toggleStyles: React.CSSProperties = {
@@ -360,12 +383,14 @@ function FlagRow({
   name,
   value,
   defaultValue,
+  description,
   onToggle,
   onChange,
 }: {
   name: string;
   value: FlagValue;
   defaultValue: FlagValue;
+  description?: string;
   onToggle: () => void;
   onChange: (value: FlagValue) => void;
 }) {
@@ -392,10 +417,15 @@ function FlagRow({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <span style={flagNameStyles}>
-        {isOverridden && <span style={overrideDotStyles} />}
-        {name}
-      </span>
+      <div style={flagNameContainerStyles}>
+        <span style={flagNameStyles}>
+          {isOverridden && <span style={overrideDotStyles} />}
+          {name}
+        </span>
+        {description && (
+          <span style={flagDescriptionStyles}>{description}</span>
+        )}
+      </div>
       {isBoolean ? (
         <button
           style={value ? toggleActiveStyles : toggleStyles}
@@ -477,9 +507,11 @@ function OptionsTab({
 function DevToolsInner({
   position: initialPosition,
   defaultOpen,
+  shortcut,
 }: {
   position: Position;
   defaultOpen: boolean;
+  shortcut: string | false;
 }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [activeTab, setActiveTab] = useState<"flags" | "options">("flags");
@@ -498,6 +530,22 @@ function DevToolsInner({
   const flagState = useFlagState();
   const context = useFeatureFlagContext<FeatureFlags>();
 
+  // Keyboard shortcut
+  useEffect(() => {
+    if (shortcut === false) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const isMod = e.metaKey || e.ctrlKey;
+      if (isMod && e.shiftKey && e.key.toLowerCase() === "f") {
+        e.preventDefault();
+        setIsOpen((prev) => !prev);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [shortcut]);
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem(POSITION_STORAGE_KEY, position);
@@ -509,7 +557,7 @@ function DevToolsInner({
   }
 
   const { setFlag, resetFlags } = context;
-  const { flags, defaultFlags } = flagState;
+  const { flags, defaultFlags, descriptions } = flagState;
   const flagEntries = Object.entries(flags);
   const overrideCount = flagEntries.filter(
     ([key, value]) => value !== defaultFlags[key]
@@ -616,6 +664,7 @@ function DevToolsInner({
                   name={key}
                   value={value}
                   defaultValue={defaultFlags[key]}
+                  description={descriptions[key]}
                   onToggle={() => handleToggle(key)}
                   onChange={(newValue) => handleChange(key, newValue)}
                 />
@@ -652,13 +701,20 @@ function DevToolsInner({
 export function LocalFlagDevTools({
   position = "bottom-right",
   defaultOpen = false,
+  shortcut = "mod+shift+f",
 }: DevToolsProps) {
   const isDev = typeof __DEV__ !== "undefined" ? __DEV__ : true;
   if (!isDev) {
     return null;
   }
 
-  return <DevToolsInner position={position} defaultOpen={defaultOpen} />;
+  return (
+    <DevToolsInner
+      position={position}
+      defaultOpen={defaultOpen}
+      shortcut={shortcut}
+    />
+  );
 }
 
 /** @deprecated Use `LocalFlagDevTools` instead */

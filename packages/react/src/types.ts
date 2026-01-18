@@ -4,6 +4,10 @@ export interface FeatureFlags {
   [key: string]: FlagValue;
 }
 
+export interface FlagDescriptions {
+  [key: string]: string;
+}
+
 export interface FeatureFlagContextValue<T extends FeatureFlags = FeatureFlags> {
   flags: T;
   isEnabled: (flagName: keyof T) => boolean;
@@ -15,6 +19,7 @@ export interface FeatureFlagContextValue<T extends FeatureFlags = FeatureFlags> 
 export interface FeatureFlagProviderProps<T extends FeatureFlags = FeatureFlags> {
   children: React.ReactNode;
   defaultFlags: T;
+  descriptions?: Partial<Record<keyof T, string>>;
   storageKey?: string;
   persistOverrides?: boolean;
 }

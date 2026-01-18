@@ -7,9 +7,10 @@ export {
   FeatureFlag,
 } from "./hooks";
 export { LocalFlagDevTools, DevTools } from "./devtools";
-export { defineFlags } from "./config";
+export { defineFlags, createFlags, type FlagConfig } from "./config";
 export type {
   FlagValue,
+  FlagDescriptions,
   FeatureFlags,
   FeatureFlagContextValue,
   FeatureFlagProviderProps,

@@ -25,6 +25,38 @@ function App() {
 
 ## Features
 
+### Keyboard Shortcut
+
+Toggle the DevTools panel with `Cmd+Shift+F` (Mac) or `Ctrl+Shift+F` (Windows/Linux).
+
+To disable the shortcut:
+
+```tsx
+<LocalFlagDevTools shortcut={false} />
+```
+
+### Flag Descriptions
+
+When using `createFlags`, descriptions are displayed below each flag name:
+
+```tsx
+import { createFlags, FeatureFlagProvider, LocalFlagDevTools } from '@localflag/react';
+
+const { flags, descriptions } = createFlags({
+  darkMode: { value: false, description: "Enable dark theme" },
+  maxItems: { value: 10, description: "Maximum items per page" },
+});
+
+function App() {
+  return (
+    <FeatureFlagProvider defaultFlags={flags} descriptions={descriptions}>
+      <YourApp />
+      <LocalFlagDevTools />
+    </FeatureFlagProvider>
+  );
+}
+```
+
 ### Flags Tab
 
 #### Toggle Boolean Flags
@@ -82,6 +114,14 @@ Start with the panel expanded:
 
 ```tsx
 <LocalFlagDevTools defaultOpen={true} />
+```
+
+### Keyboard Shortcut
+
+The keyboard shortcut is enabled by default. To disable it:
+
+```tsx
+<LocalFlagDevTools shortcut={false} />
 ```
 
 ## Production Behavior
