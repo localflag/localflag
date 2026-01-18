@@ -1,62 +1,11 @@
 ---
 title: LocalFlag
 description: Type-safe feature flags for React with built-in DevTools.
-template: splash
-hero:
-  tagline: Simple, type-safe feature flags for React applications with built-in DevTools for local development.
-  actions:
-    - text: Get Started
-      link: /guides/getting-started/
-      icon: right-arrow
-    - text: View on GitHub
-      link: https://github.com/localflag/localflag
-      icon: external
-      variant: minimal
+head:
+  - tag: meta
+    attrs:
+      http-equiv: refresh
+      content: "0;url=/guides/getting-started/"
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
-
-## Features
-
-<CardGrid stagger>
-	<Card title="Type-Safe" icon="approve-check">
-		Full TypeScript support with generics for your flag definitions.
-	</Card>
-	<Card title="DevTools" icon="setting">
-		Built-in floating panel to toggle flags during development.
-	</Card>
-	<Card title="Persistent Overrides" icon="document">
-		Flag overrides are saved to localStorage and persist across sessions.
-	</Card>
-	<Card title="Zero Config" icon="rocket">
-		Just wrap your app with the provider and start using flags.
-	</Card>
-</CardGrid>
-
-## Quick Example
-
-```tsx
-import { FeatureFlagProvider, useFeatureFlag, DevTools } from '@localflag/react';
-
-const flags = {
-  darkMode: false,
-  newFeature: true,
-};
-
-function App() {
-  const darkMode = useFeatureFlag('darkMode');
-
-  return (
-    <div className={darkMode ? 'dark' : 'light'}>
-      <h1>My App</h1>
-    </div>
-  );
-}
-
-createRoot(document.getElementById('root')!).render(
-  <FeatureFlagProvider defaultFlags={flags}>
-    <App />
-    <DevTools />
-  </FeatureFlagProvider>
-);
-```
+Redirecting to [Getting Started](/guides/getting-started/)...

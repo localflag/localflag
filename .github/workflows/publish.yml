@@ -27,6 +27,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Set version from release tag
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "Setting version to $VERSION"
+          cd packages/react
+          npm version $VERSION --no-git-tag-version
+
       - name: Build package
         run: pnpm build --filter @localflag/react
 

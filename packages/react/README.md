@@ -1,6 +1,6 @@
 # @localflag/react
 
-Type-safe feature flags for React with built-in DevTools.
+Type-safe feature flags for React with built-in LocalFlagDevTools.
 
 [Website](https://localflag.io) · [Documentation](https://docs.localflag.io) · [Demo](https://demo.localflag.io) · [GitHub](https://github.com/localflag/localflag)
 
@@ -13,7 +13,7 @@ npm install @localflag/react
 ## Quick Start
 
 ```tsx
-import { FeatureFlagProvider, useFeatureFlag, DevTools } from '@localflag/react';
+import { FeatureFlagProvider, useFeatureFlag, LocalFlagDevTools } from '@localflag/react';
 
 // 1. Define your flags
 const defaultFlags = {
@@ -30,7 +30,7 @@ function App() {
   return (
     <FeatureFlagProvider<AppFlags> defaultFlags={defaultFlags}>
       <MyApp />
-      <DevTools /> {/* Optional: adds a floating panel to toggle flags */}
+      <LocalFlagDevTools /> {/* Optional: adds a floating panel to toggle flags */}
     </FeatureFlagProvider>
   );
 }
@@ -121,14 +121,14 @@ import { FeatureFlag } from '@localflag/react';
 </FeatureFlag>
 ```
 
-#### `DevTools`
+#### `LocalFlagDevTools`
 
 A floating panel for toggling flags during development.
 
 ```tsx
-import { DevTools } from '@localflag/react';
+import { LocalFlagDevTools } from '@localflag/react';
 
-<DevTools
+<LocalFlagDevTools
   position="bottom-right"  // 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'
   defaultOpen={false}      // Start expanded or collapsed
 />
@@ -153,11 +153,49 @@ const version = useFeatureFlagValue<AppFlags>('apiVersion');
 // TypeScript knows this is 'v2' (string literal type)
 ```
 
+### Config File Pattern
+
+For larger projects, you can use `defineFlags` to create a centralized config file:
+
+```ts
+// flags.config.ts
+import { defineFlags } from '@localflag/react';
+
+export const flags = defineFlags({
+  darkMode: false,
+  newCheckout: true,
+  maxRetries: 3,
+});
+
+export type AppFlags = typeof flags;
+```
+
+Then import it in your app:
+
+```tsx
+// App.tsx
+import { flags, AppFlags } from './flags.config';
+import { FeatureFlagProvider, useFeatureFlag } from '@localflag/react';
+
+function App() {
+  return (
+    <FeatureFlagProvider<AppFlags> defaultFlags={flags}>
+      <MyApp />
+    </FeatureFlagProvider>
+  );
+}
+```
+
+Benefits:
+- All flags managed in one place
+- Easy to export and share types across your app
+- Enables future tooling integration
+
 ## Persistence
 
 By default, flag overrides are persisted to `localStorage`. This means:
 
-- Flags you toggle in DevTools persist across page reloads
+- Flags you toggle in LocalFlagDevTools persist across page reloads
 - Each user can have their own overrides for testing
 - Call `resetFlags()` to clear all overrides and return to defaults
 

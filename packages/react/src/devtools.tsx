@@ -1,38 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFlagState, useFeatureFlagContext } from "./context";
 import type { FlagValue, FeatureFlags } from "./types";
 
 declare const __DEV__: boolean | undefined;
 
+type Position = "bottom-right" | "bottom-left" | "top-right" | "top-left";
+
 interface DevToolsProps {
-  position?: "bottom-right" | "bottom-left" | "top-right" | "top-left";
+  position?: Position;
   defaultOpen?: boolean;
 }
 
+const POSITION_STORAGE_KEY = "localflag:position";
+
 const positionStyles: Record<string, React.CSSProperties> = {
-  "bottom-right": { bottom: 16, right: 16 },
-  "bottom-left": { bottom: 16, left: 16 },
-  "top-right": { top: 16, right: 16 },
-  "top-left": { top: 16, left: 16 },
+  "bottom-right": { bottom: 12, right: 12 },
+  "bottom-left": { bottom: 12, left: 12 },
+  "top-right": { top: 12, right: 12 },
+  "top-left": { top: 12, left: 12 },
 };
 
 const baseStyles: React.CSSProperties = {
   position: "fixed",
   zIndex: 99999,
   fontFamily:
-    'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
-  fontSize: 13,
+    'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
+  fontSize: 12,
+  lineHeight: 1.5,
+  WebkitFontSmoothing: "antialiased",
 };
 
 const panelStyles: React.CSSProperties = {
-  backgroundColor: "#1a1a2e",
-  border: "1px solid #2d2d44",
-  borderRadius: 8,
-  boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
+  backgroundColor: "#0a0a0a",
+  border: "1px solid rgba(255, 255, 255, 0.08)",
+  borderRadius: 10,
+  boxShadow:
+    "0 0 0 1px rgba(0, 0, 0, 0.5), 0 16px 70px rgba(0, 0, 0, 0.6)",
   overflow: "hidden",
-  minWidth: 280,
-  maxWidth: 360,
-  maxHeight: "70vh",
+  minWidth: 260,
+  maxWidth: 320,
+  maxHeight: "60vh",
 };
 
 const headerStyles: React.CSSProperties = {
@@ -40,56 +47,89 @@ const headerStyles: React.CSSProperties = {
   alignItems: "center",
   justifyContent: "space-between",
   padding: "10px 12px",
-  backgroundColor: "#16162a",
-  borderBottom: "1px solid #2d2d44",
+  borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
   cursor: "pointer",
   userSelect: "none",
 };
 
 const titleStyles: React.CSSProperties = {
-  color: "#e0e0e0",
-  fontWeight: 600,
-  fontSize: 12,
-  textTransform: "uppercase",
-  letterSpacing: "0.5px",
+  color: "rgba(255, 255, 255, 0.9)",
+  fontWeight: 500,
+  fontSize: 11,
+  letterSpacing: "0.01em",
   display: "flex",
   alignItems: "center",
-  gap: 6,
+  gap: 8,
+};
+
+const tabBarStyles: React.CSSProperties = {
+  display: "flex",
+  borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
+  padding: "0 12px",
+  gap: 4,
+};
+
+const tabStyles: React.CSSProperties = {
+  padding: "8px 10px",
+  fontSize: 11,
+  fontWeight: 500,
+  color: "rgba(255, 255, 255, 0.5)",
+  backgroundColor: "transparent",
+  border: "none",
+  borderBottom: "2px solid transparent",
+  cursor: "pointer",
+  transition: "color 0.15s ease",
+  fontFamily: "inherit",
+  marginBottom: -1,
+};
+
+const tabActiveStyles: React.CSSProperties = {
+  ...tabStyles,
+  color: "rgba(255, 255, 255, 0.9)",
+  borderBottomColor: "#fff",
 };
 
 const contentStyles: React.CSSProperties = {
   padding: 0,
   overflowY: "auto",
-  maxHeight: "calc(70vh - 50px)",
+  maxHeight: "calc(60vh - 84px)",
 };
 
 const flagRowStyles: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  padding: "10px 12px",
-  borderBottom: "1px solid #2d2d44",
-  transition: "background-color 0.15s",
+  padding: "8px 12px",
+  borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
+  transition: "background-color 0.15s ease",
+  gap: 12,
+};
+
+const flagRowHoverStyles: React.CSSProperties = {
+  backgroundColor: "rgba(255, 255, 255, 0.03)",
 };
 
 const flagNameStyles: React.CSSProperties = {
-  color: "#c0c0c0",
-  fontSize: 13,
-  fontWeight: 500,
+  color: "rgba(255, 255, 255, 0.7)",
+  fontSize: 12,
+  fontWeight: 400,
   flex: 1,
   overflow: "hidden",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
+  display: "flex",
+  alignItems: "center",
+  gap: 6,
 };
 
 const toggleStyles: React.CSSProperties = {
   position: "relative",
-  width: 40,
-  height: 22,
-  backgroundColor: "#3d3d5c",
-  borderRadius: 11,
+  width: 28,
+  height: 16,
+  backgroundColor: "rgba(255, 255, 255, 0.1)",
+  borderRadius: 8,
   cursor: "pointer",
-  transition: "background-color 0.2s",
+  transition: "background-color 0.15s ease",
   flexShrink: 0,
   border: "none",
   padding: 0,
@@ -97,102 +137,158 @@ const toggleStyles: React.CSSProperties = {
 
 const toggleActiveStyles: React.CSSProperties = {
   ...toggleStyles,
-  backgroundColor: "#4ade80",
+  backgroundColor: "#fff",
 };
 
 const toggleKnobStyles: React.CSSProperties = {
   position: "absolute",
   top: 2,
   left: 2,
-  width: 18,
-  height: 18,
-  backgroundColor: "#fff",
+  width: 12,
+  height: 12,
+  backgroundColor: "rgba(255, 255, 255, 0.5)",
   borderRadius: "50%",
-  transition: "transform 0.2s",
-  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.3)",
+  transition: "transform 0.15s ease, background-color 0.15s ease",
 };
 
 const toggleKnobActiveStyles: React.CSSProperties = {
   ...toggleKnobStyles,
-  transform: "translateX(18px)",
+  transform: "translateX(12px)",
+  backgroundColor: "#0a0a0a",
 };
 
 const inputStyles: React.CSSProperties = {
-  backgroundColor: "#2d2d44",
-  border: "1px solid #3d3d5c",
-  borderRadius: 4,
-  color: "#e0e0e0",
-  padding: "4px 8px",
-  fontSize: 12,
-  width: 80,
+  backgroundColor: "rgba(255, 255, 255, 0.05)",
+  border: "1px solid rgba(255, 255, 255, 0.1)",
+  borderRadius: 5,
+  color: "rgba(255, 255, 255, 0.9)",
+  padding: "3px 8px",
+  fontSize: 11,
+  width: 72,
   outline: "none",
+  transition: "border-color 0.15s ease, background-color 0.15s ease",
 };
 
-const badgeStyles: React.CSSProperties = {
-  backgroundColor: "#4ade80",
-  color: "#1a1a2e",
-  fontSize: 10,
-  fontWeight: 700,
-  padding: "2px 6px",
-  borderRadius: 4,
-  marginLeft: 6,
-};
-
-const overrideBadgeStyles: React.CSSProperties = {
-  backgroundColor: "#f59e0b",
-  color: "#1a1a2e",
-  fontSize: 9,
-  fontWeight: 600,
-  padding: "1px 4px",
-  borderRadius: 3,
-  marginLeft: 6,
+const overrideDotStyles: React.CSSProperties = {
+  width: 5,
+  height: 5,
+  borderRadius: "50%",
+  backgroundColor: "#3b82f6",
+  flexShrink: 0,
 };
 
 const buttonStyles: React.CSSProperties = {
   backgroundColor: "transparent",
   border: "none",
-  color: "#888",
+  color: "rgba(255, 255, 255, 0.4)",
   cursor: "pointer",
   padding: 4,
   borderRadius: 4,
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  transition: "color 0.15s, background-color 0.15s",
+  transition: "color 0.15s ease",
 };
 
 const resetButtonStyles: React.CSSProperties = {
-  backgroundColor: "#2d2d44",
-  border: "1px solid #3d3d5c",
-  borderRadius: 4,
-  color: "#c0c0c0",
-  padding: "6px 12px",
+  backgroundColor: "rgba(255, 255, 255, 0.05)",
+  border: "1px solid rgba(255, 255, 255, 0.08)",
+  borderRadius: 6,
+  color: "rgba(255, 255, 255, 0.6)",
+  padding: "6px 10px",
   fontSize: 11,
+  fontWeight: 500,
   cursor: "pointer",
-  margin: "8px 12px 12px",
+  margin: "8px 12px 10px",
   width: "calc(100% - 24px)",
-  transition: "background-color 0.15s",
+  transition: "background-color 0.15s ease, color 0.15s ease",
+  fontFamily: "inherit",
 };
 
 const fabStyles: React.CSSProperties = {
-  width: 48,
-  height: 48,
-  borderRadius: "50%",
-  backgroundColor: "#4ade80",
-  border: "none",
+  height: 32,
+  paddingLeft: 10,
+  paddingRight: 10,
+  borderRadius: 8,
+  backgroundColor: "#0a0a0a",
+  border: "1px solid rgba(255, 255, 255, 0.1)",
   cursor: "pointer",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  boxShadow: "0 4px 12px rgba(74, 222, 128, 0.4)",
-  transition: "transform 0.15s, box-shadow 0.15s",
+  gap: 6,
+  boxShadow:
+    "0 0 0 1px rgba(0, 0, 0, 0.5), 0 4px 16px rgba(0, 0, 0, 0.4)",
+  transition: "background-color 0.15s ease, border-color 0.15s ease",
+  fontFamily: "inherit",
+  fontSize: 11,
+  fontWeight: 500,
+  color: "rgba(255, 255, 255, 0.8)",
 };
 
-function FlagIcon() {
+const badgeStyles: React.CSSProperties = {
+  backgroundColor: "#3b82f6",
+  color: "#fff",
+  fontSize: 9,
+  fontWeight: 600,
+  minWidth: 14,
+  height: 14,
+  padding: "0 4px",
+  borderRadius: 7,
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+};
+
+const optionsSectionStyles: React.CSSProperties = {
+  padding: "12px",
+};
+
+const optionsLabelStyles: React.CSSProperties = {
+  fontSize: 10,
+  fontWeight: 500,
+  color: "rgba(255, 255, 255, 0.5)",
+  textTransform: "uppercase",
+  letterSpacing: "0.05em",
+  marginBottom: 8,
+  display: "block",
+};
+
+const positionGridStyles: React.CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  gap: 6,
+};
+
+const positionButtonStyles: React.CSSProperties = {
+  padding: "8px",
+  fontSize: 10,
+  fontWeight: 500,
+  color: "rgba(255, 255, 255, 0.6)",
+  backgroundColor: "rgba(255, 255, 255, 0.03)",
+  border: "1px solid rgba(255, 255, 255, 0.08)",
+  borderRadius: 6,
+  cursor: "pointer",
+  transition: "all 0.15s ease",
+  fontFamily: "inherit",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 6,
+};
+
+const positionButtonActiveStyles: React.CSSProperties = {
+  ...positionButtonStyles,
+  color: "rgba(255, 255, 255, 0.9)",
+  backgroundColor: "rgba(255, 255, 255, 0.1)",
+  borderColor: "rgba(255, 255, 255, 0.2)",
+};
+
+function FlagIcon({ size = 14 }: { size?: number }) {
   return (
     <svg
-      width="20"
-      height="20"
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -206,21 +302,57 @@ function FlagIcon() {
   );
 }
 
-function CloseIcon() {
+function ChevronIcon({ direction }: { direction: "up" | "down" }) {
   return (
     <svg
-      width="16"
-      height="16"
+      width="12"
+      height="12"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      style={{
+        transform: direction === "up" ? "rotate(180deg)" : "rotate(0deg)",
+        transition: "transform 0.15s ease",
+      }}
     >
-      <line x1="18" y1="6" x2="6" y2="18" />
-      <line x1="6" y1="6" x2="18" y2="18" />
+      <polyline points="6 9 12 15 18 9" />
     </svg>
+  );
+}
+
+function PositionIcon({ position }: { position: Position }) {
+  const dotPosition = {
+    "top-left": { top: 2, left: 2 },
+    "top-right": { top: 2, right: 2 },
+    "bottom-left": { bottom: 2, left: 2 },
+    "bottom-right": { bottom: 2, right: 2 },
+  }[position];
+
+  return (
+    <div
+      style={{
+        width: 14,
+        height: 14,
+        border: "1px solid currentColor",
+        borderRadius: 2,
+        position: "relative",
+        opacity: 0.7,
+      }}
+    >
+      <div
+        style={{
+          position: "absolute",
+          width: 4,
+          height: 4,
+          backgroundColor: "currentColor",
+          borderRadius: 1,
+          ...dotPosition,
+        }}
+      />
+    </div>
   );
 }
 
@@ -237,12 +369,12 @@ function FlagRow({
   onToggle: () => void;
   onChange: (value: FlagValue) => void;
 }) {
+  const [isHovered, setIsHovered] = useState(false);
   const isOverridden = value !== defaultValue;
   const isBoolean = typeof value === "boolean";
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
-    // Try to parse as number
     const num = Number(newValue);
     if (!isNaN(num) && newValue !== "") {
       onChange(num);
@@ -252,10 +384,17 @@ function FlagRow({
   };
 
   return (
-    <div style={flagRowStyles}>
+    <div
+      style={{
+        ...flagRowStyles,
+        ...(isHovered ? flagRowHoverStyles : {}),
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <span style={flagNameStyles}>
+        {isOverridden && <span style={overrideDotStyles} />}
         {name}
-        {isOverridden && <span style={overrideBadgeStyles}>override</span>}
       </span>
       {isBoolean ? (
         <button
@@ -272,29 +411,104 @@ function FlagRow({
           type="text"
           value={String(value)}
           onChange={handleInputChange}
+          onFocus={(e) => {
+            e.target.style.borderColor = "rgba(255, 255, 255, 0.2)";
+            e.target.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+          }}
+          onBlur={(e) => {
+            e.target.style.borderColor = "rgba(255, 255, 255, 0.1)";
+            e.target.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+          }}
         />
       )}
     </div>
   );
 }
 
-function DevToolsInner({
+function OptionsTab({
   position,
+  onPositionChange,
+}: {
+  position: Position;
+  onPositionChange: (position: Position) => void;
+}) {
+  const [hoveredPosition, setHoveredPosition] = useState<Position | null>(null);
+  const positions: { value: Position; label: string }[] = [
+    { value: "top-left", label: "Top Left" },
+    { value: "top-right", label: "Top Right" },
+    { value: "bottom-left", label: "Bottom Left" },
+    { value: "bottom-right", label: "Bottom Right" },
+  ];
+
+  return (
+    <div style={optionsSectionStyles}>
+      <span style={optionsLabelStyles}>Position</span>
+      <div style={positionGridStyles}>
+        {positions.map(({ value, label }) => {
+          const isActive = position === value;
+          const isHovered = hoveredPosition === value;
+          return (
+            <button
+              key={value}
+              style={{
+                ...(isActive ? positionButtonActiveStyles : positionButtonStyles),
+                ...(isHovered && !isActive
+                  ? {
+                      backgroundColor: "rgba(255, 255, 255, 0.05)",
+                      borderColor: "rgba(255, 255, 255, 0.12)",
+                    }
+                  : {}),
+              }}
+              onClick={() => onPositionChange(value)}
+              onMouseEnter={() => setHoveredPosition(value)}
+              onMouseLeave={() => setHoveredPosition(null)}
+              type="button"
+            >
+              <PositionIcon position={value} />
+              {label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function DevToolsInner({
+  position: initialPosition,
   defaultOpen,
 }: {
-  position: "bottom-right" | "bottom-left" | "top-right" | "top-left";
+  position: Position;
   defaultOpen: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
+  const [activeTab, setActiveTab] = useState<"flags" | "options">("flags");
+  const [position, setPosition] = useState<Position>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem(POSITION_STORAGE_KEY);
+      if (stored && stored in positionStyles) {
+        return stored as Position;
+      }
+    }
+    return initialPosition;
+  });
+  const [fabHovered, setFabHovered] = useState(false);
+  const [resetHovered, setResetHovered] = useState(false);
+  const [headerHovered, setHeaderHovered] = useState(false);
   const flagState = useFlagState();
   const context = useFeatureFlagContext<FeatureFlags>();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(POSITION_STORAGE_KEY, position);
+    }
+  }, [position]);
 
   if (!flagState) {
     return null;
   }
 
   const { setFlag, resetFlags } = context;
-
   const { flags, defaultFlags } = flagState;
   const flagEntries = Object.entries(flags);
   const overrideCount = flagEntries.filter(
@@ -316,14 +530,24 @@ function DevToolsInner({
     return (
       <div style={{ ...baseStyles, ...positionStyles[position] }}>
         <button
-          style={fabStyles}
+          style={{
+            ...fabStyles,
+            ...(fabHovered
+              ? {
+                  backgroundColor: "#141414",
+                  borderColor: "rgba(255, 255, 255, 0.15)",
+                }
+              : {}),
+          }}
           onClick={() => setIsOpen(true)}
+          onMouseEnter={() => setFabHovered(true)}
+          onMouseLeave={() => setFabHovered(false)}
           type="button"
           aria-label="Open feature flags devtools"
         >
-          <span style={{ color: "#1a1a2e" }}>
-            <FlagIcon />
-          </span>
+          <FlagIcon size={12} />
+          <span>Flags</span>
+          {overrideCount > 0 && <span style={badgeStyles}>{overrideCount}</span>}
         </button>
       </div>
     );
@@ -332,45 +556,103 @@ function DevToolsInner({
   return (
     <div style={{ ...baseStyles, ...positionStyles[position] }}>
       <div style={panelStyles}>
-        <div style={headerStyles} onClick={() => setIsOpen(false)}>
+        <div
+          style={{
+            ...headerStyles,
+            ...(headerHovered
+              ? { backgroundColor: "rgba(255, 255, 255, 0.02)" }
+              : {}),
+          }}
+          onClick={() => setIsOpen(false)}
+          onMouseEnter={() => setHeaderHovered(true)}
+          onMouseLeave={() => setHeaderHovered(false)}
+        >
           <span style={titleStyles}>
-            <FlagIcon />
+            <FlagIcon size={12} />
             Feature Flags
-            {overrideCount > 0 && (
-              <span style={badgeStyles}>{overrideCount}</span>
-            )}
+            {overrideCount > 0 && <span style={badgeStyles}>{overrideCount}</span>}
           </span>
-          <button style={buttonStyles} type="button" aria-label="Close">
-            <CloseIcon />
+          <button
+            style={{
+              ...buttonStyles,
+              ...(headerHovered ? { color: "rgba(255, 255, 255, 0.6)" } : {}),
+            }}
+            type="button"
+            aria-label="Close"
+          >
+            <ChevronIcon direction="down" />
           </button>
         </div>
-        <div style={contentStyles}>
-          {flagEntries.map(([key, value]) => (
-            <FlagRow
-              key={key}
-              name={key}
-              value={value}
-              defaultValue={defaultFlags[key]}
-              onToggle={() => handleToggle(key)}
-              onChange={(newValue) => handleChange(key, newValue)}
-            />
-          ))}
-        </div>
-        {overrideCount > 0 && (
-          <button style={resetButtonStyles} onClick={resetFlags} type="button">
-            Reset all overrides
+
+        <div style={tabBarStyles}>
+          <button
+            style={activeTab === "flags" ? tabActiveStyles : tabStyles}
+            onClick={(e) => {
+              e.stopPropagation();
+              setActiveTab("flags");
+            }}
+            type="button"
+          >
+            Flags
           </button>
+          <button
+            style={activeTab === "options" ? tabActiveStyles : tabStyles}
+            onClick={(e) => {
+              e.stopPropagation();
+              setActiveTab("options");
+            }}
+            type="button"
+          >
+            Options
+          </button>
+        </div>
+
+        {activeTab === "flags" ? (
+          <>
+            <div style={contentStyles}>
+              {flagEntries.map(([key, value]) => (
+                <FlagRow
+                  key={key}
+                  name={key}
+                  value={value}
+                  defaultValue={defaultFlags[key]}
+                  onToggle={() => handleToggle(key)}
+                  onChange={(newValue) => handleChange(key, newValue)}
+                />
+              ))}
+            </div>
+            {overrideCount > 0 && (
+              <button
+                style={{
+                  ...resetButtonStyles,
+                  ...(resetHovered
+                    ? {
+                        backgroundColor: "rgba(255, 255, 255, 0.08)",
+                        color: "rgba(255, 255, 255, 0.8)",
+                      }
+                    : {}),
+                }}
+                onClick={resetFlags}
+                onMouseEnter={() => setResetHovered(true)}
+                onMouseLeave={() => setResetHovered(false)}
+                type="button"
+              >
+                Reset overrides
+              </button>
+            )}
+          </>
+        ) : (
+          <OptionsTab position={position} onPositionChange={setPosition} />
         )}
       </div>
     </div>
   );
 }
 
-export function DevTools({
+export function LocalFlagDevTools({
   position = "bottom-right",
   defaultOpen = false,
 }: DevToolsProps) {
-  // Don't render in production - check via global __DEV__ or fallback to always showing
   const isDev = typeof __DEV__ !== "undefined" ? __DEV__ : true;
   if (!isDev) {
     return null;
@@ -379,4 +661,7 @@ export function DevTools({
   return <DevToolsInner position={position} defaultOpen={defaultOpen} />;
 }
 
-export default DevTools;
+/** @deprecated Use `LocalFlagDevTools` instead */
+export const DevTools = LocalFlagDevTools;
+
+export default LocalFlagDevTools;

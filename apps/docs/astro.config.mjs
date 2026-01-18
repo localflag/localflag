@@ -22,6 +22,7 @@ export default defineConfig({
 						{ label: 'Provider', slug: 'reference/provider' },
 						{ label: 'Hooks', slug: 'reference/hooks' },
 						{ label: 'Components', slug: 'reference/components' },
+						{ label: 'Utilities', slug: 'reference/utilities' },
 					],
 				},
 			],

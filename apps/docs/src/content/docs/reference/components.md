@@ -35,18 +35,18 @@ function MyComponent() {
 </FeatureFlag>
 ```
 
-## DevTools
+## LocalFlagDevTools
 
 A floating panel for managing feature flags during development.
 
 ```tsx
-import { DevTools } from '@localflag/react';
+import { LocalFlagDevTools } from '@localflag/react';
 
 function App() {
   return (
     <FeatureFlagProvider defaultFlags={defaultFlags}>
       <MyApp />
-      <DevTools />
+      <LocalFlagDevTools />
     </FeatureFlagProvider>
   );
 }
@@ -56,11 +56,15 @@ function App() {
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `position` | `"bottom-right" \| "bottom-left" \| "top-right" \| "top-left"` | `"bottom-right"` | Panel position |
+| `position` | `"bottom-right" \| "bottom-left" \| "top-right" \| "top-left"` | `"bottom-right"` | Initial panel position |
 | `defaultOpen` | `boolean` | `false` | Whether panel starts expanded |
 
 ### Example
 
 ```tsx
-<DevTools position="top-left" defaultOpen={true} />
+<LocalFlagDevTools position="top-left" defaultOpen={true} />
 ```
+
+:::note
+`DevTools` is still available as a deprecated alias for backwards compatibility.
+:::

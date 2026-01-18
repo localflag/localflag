@@ -1,23 +1,23 @@
 ---
-title: DevTools
-description: Use the built-in DevTools panel to manage feature flags during development.
+title: LocalFlagDevTools
+description: Use the built-in LocalFlagDevTools panel to manage feature flags during development.
 ---
 
-The DevTools component provides a floating panel that allows you to toggle feature flags without changing code.
+The LocalFlagDevTools component provides a floating panel that allows you to toggle feature flags without changing code.
 
-## Adding DevTools
+## Adding LocalFlagDevTools
 
-Include the `DevTools` component inside your `FeatureFlagProvider`:
+Include the `LocalFlagDevTools` component inside your `FeatureFlagProvider`:
 
 ```tsx
-import { FeatureFlagProvider, DevTools } from '@localflag/react';
+import { FeatureFlagProvider, LocalFlagDevTools } from '@localflag/react';
 import { defaultFlags } from './flags';
 
 function App() {
   return (
     <FeatureFlagProvider defaultFlags={defaultFlags}>
       <YourApp />
-      <DevTools />
+      <LocalFlagDevTools />
     </FeatureFlagProvider>
   );
 }
@@ -25,37 +25,55 @@ function App() {
 
 ## Features
 
-### Toggle Boolean Flags
+### Flags Tab
+
+#### Toggle Boolean Flags
 
 Boolean flags display as toggle switches. Click to enable or disable.
 
-### Edit String/Number Values
+#### Edit String/Number Values
 
 String and number flags show an input field where you can change the value.
 
-### Override Indicator
+#### Override Indicator
 
-Flags that have been changed from their default values are marked with an "override" badge.
+Flags that have been changed from their default values are marked with a blue dot.
 
-### Reset All
+#### Reset All
 
-A "Reset all overrides" button appears when any flags have been modified, allowing you to restore all default values.
+A "Reset overrides" button appears when any flags have been modified, allowing you to restore all default values.
+
+### Options Tab
+
+The Options tab allows you to configure the LocalFlagDevTools panel directly from the UI.
+
+#### Position
+
+Choose where the LocalFlagDevTools panel appears by selecting one of four positions:
+- Top Left
+- Top Right
+- Bottom Left
+- Bottom Right
+
+The selected position is automatically saved and persists across page reloads.
 
 ### Persistent Storage
 
-All overrides are automatically saved to `localStorage` and persist across page reloads and browser sessions.
+All overrides and settings are automatically saved to `localStorage`:
+- Flag overrides: `localflag:overrides`
+- Panel position: `localflag:position`
 
 ## Configuration
 
-### Position
+### Initial Position
 
-Choose where the DevTools panel appears:
+Set the initial position via prop (can be changed later in the Options tab):
 
 ```tsx
-<DevTools position="bottom-right" /> {/* default */}
-<DevTools position="bottom-left" />
-<DevTools position="top-right" />
-<DevTools position="top-left" />
+<LocalFlagDevTools position="bottom-right" /> {/* default */}
+<LocalFlagDevTools position="bottom-left" />
+<LocalFlagDevTools position="top-right" />
+<LocalFlagDevTools position="top-left" />
 ```
 
 ### Default Open State
@@ -63,9 +81,9 @@ Choose where the DevTools panel appears:
 Start with the panel expanded:
 
 ```tsx
-<DevTools defaultOpen={true} />
+<LocalFlagDevTools defaultOpen={true} />
 ```
 
 ## Production Behavior
 
-DevTools automatically hides itself in production builds. You don't need to conditionally render it.
+LocalFlagDevTools automatically hides itself in production builds. You don't need to conditionally render it.
