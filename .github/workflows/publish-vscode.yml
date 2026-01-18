@@ -9,54 +9,27 @@ on:
         required: true
 
 jobs:
-  check-and-publish:
+  publish:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Check for changes in vscode-extension
-        id: changes
-        run: |
-          # Get the previous tag
-          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
-
-          if [ -z "$PREV_TAG" ]; then
-            echo "No previous tag found, assuming first release"
-            echo "changed=true" >> $GITHUB_OUTPUT
-          else
-            # Check if there are changes in apps/vscode-extension since last tag
-            CHANGED=$(git diff --name-only $PREV_TAG HEAD -- apps/vscode-extension | wc -l)
-            if [ "$CHANGED" -gt 0 ]; then
-              echo "Changes detected in vscode-extension"
-              echo "changed=true" >> $GITHUB_OUTPUT
-            else
-              echo "No changes in vscode-extension"
-              echo "changed=false" >> $GITHUB_OUTPUT
-            fi
-          fi
 
       - name: Setup pnpm
-        if: steps.changes.outputs.changed == 'true'
         uses: pnpm/action-setup@v4
 
       - name: Setup Node.js
-        if: steps.changes.outputs.changed == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'pnpm'
 
       - name: Install dependencies
-        if: steps.changes.outputs.changed == 'true'
         run: pnpm install
 
       - name: Set version from release tag
-        if: steps.changes.outputs.changed == 'true'
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
@@ -65,35 +38,29 @@ jobs:
           npm version $VERSION --no-git-tag-version --allow-same-version
 
       - name: Build extension
-        if: steps.changes.outputs.changed == 'true'
         run: pnpm build --filter localflag-vscode
 
       - name: Package extension
-        if: steps.changes.outputs.changed == 'true'
         run: |
           cd apps/vscode-extension
           pnpm exec vsce package --no-dependencies
 
       - name: Publish to VS Code Marketplace
-        if: steps.changes.outputs.changed == 'true'
         run: |
           cd apps/vscode-extension
           pnpm exec vsce publish --no-dependencies -p ${{ secrets.VSCE_PAT }}
 
       - name: Publish to Open VSX
-        if: steps.changes.outputs.changed == 'true'
         run: |
           cd apps/vscode-extension
           pnpm exec ovsx publish *.vsix -p ${{ secrets.OVSX_TOKEN }}
 
       - name: Upload VSIX to GitHub Release
-        if: steps.changes.outputs.changed == 'true'
         uses: softprops/action-gh-release@v1
         with:
           files: apps/vscode-extension/*.vsix
 
       - name: Upload VSIX artifact
-        if: steps.changes.outputs.changed == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: localflag-vscode
