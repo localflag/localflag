@@ -56,7 +56,7 @@ jobs:
           pnpm exec ovsx publish *.vsix -p ${{ secrets.OVSX_TOKEN }}
 
       - name: Upload VSIX to GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: apps/vscode-extension/*.vsix
 
