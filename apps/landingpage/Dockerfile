@@ -4,6 +4,14 @@ WORKDIR /app
 
 # Build
 FROM base AS builder
+ARG PUBLIC_UMAMI_URL
+ARG PUBLIC_UMAMI_ID
+ARG PUBLIC_UMAMI_DEBUG
+ARG PUBLIC_UMAMI_LAZY_LOAD
+ENV PUBLIC_UMAMI_URL=$PUBLIC_UMAMI_URL \
+    PUBLIC_UMAMI_ID=$PUBLIC_UMAMI_ID \
+    PUBLIC_UMAMI_DEBUG=$PUBLIC_UMAMI_DEBUG \
+    PUBLIC_UMAMI_LAZY_LOAD=$PUBLIC_UMAMI_LAZY_LOAD
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY apps/landingpage ./apps/landingpage
 RUN pnpm install --frozen-lockfile --filter landingpage
