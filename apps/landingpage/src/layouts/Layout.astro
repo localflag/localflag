@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import UmamiAnalyticsBridge from '../components/UmamiAnalyticsBridge';
 
 interface Props {
   title?: string;
@@ -22,6 +23,7 @@ const { title = "LocalFlag - Feature Flags for React" } = Astro.props;
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   </head>
   <body class="bg-void text-text-primary antialiased overflow-x-hidden">
+    <UmamiAnalyticsBridge client:load />
     <slot />
   </body>
 </html>
